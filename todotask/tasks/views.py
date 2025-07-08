@@ -1,30 +1,58 @@
 from django.shortcuts import render , get_object_or_404
-from rest_framework import viewsets
 from .models import ToTasks
 from .serializers import ToTaskSerializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import mixins
+from rest_framework import generics
 
 
 
-class ToTaskView(viewsets.ModelViewSet):
-
-    permission_classes = [IsAuthenticated ]
-    queryset = ToTasks.objects.filter(status = 'noncompleted')
+class ToTaskView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+):
     serializer_class = ToTaskSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ToTasks.objects.filter(list_id=self.kwargs.get('list_pk') , status = 'noncompleted')
 
     def perform_create(self, serializer):
-        list_id =  self.request.user.lists.get(id = self.request.data.get('list_id'))
-        serializer.save(list_id=list_id)  
+            list_id =  self.request.user.lists.get(id = self.kwargs.get('list_pk'))
+            serializer.save(list_id=list_id)  
+    
+    
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-    @action(detail=True, methods=['PATCH'])
-    def complete(self , request , pk ):
+class ToTaskDetailView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+):
+    serializer_class = ToTaskSerializers
+    permission_classes = [IsAuthenticated]
 
-        task = get_object_or_404(ToTasks , id = pk )
-        serializer =  ToTaskSerializers( task , data = request.data , partial = True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'task updated ': serializer.data} , status=201)
-        return Response({'error': serializer.errors} , status=400)
+    def get_queryset(self ):
+        list_id = self.kwargs.get('list_pk')
+        return ToTasks.objects.filter(list_id=list_id  )
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
