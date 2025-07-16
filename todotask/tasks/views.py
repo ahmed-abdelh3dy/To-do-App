@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework import mixins
 from rest_framework import generics
+from lists.models import ToList
 
 
 
@@ -20,9 +21,8 @@ class ToTaskView(
         return ToTasks.objects.filter(list_id=self.kwargs.get('list_pk') , status = 'noncompleted')
 
     def perform_create(self, serializer):
-            list_id =  self.request.user.lists.get(id = self.kwargs.get('list_pk'))
-            serializer.save(list_id=list_id)  
-    
+            the_list= get_object_or_404(ToList ,id = self.kwargs.get('list_pk') , user_id = self.request.user.id )
+            serializer.save(list_id=the_list)
     
 
     def get(self, request, *args, **kwargs):
