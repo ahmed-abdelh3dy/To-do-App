@@ -4,6 +4,7 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .permissions import OwnerList
+from rest_framework.throttling import UserRateThrottle
 
 
 class ToListView(
@@ -13,6 +14,7 @@ class ToListView(
     permission_classes = [IsAuthenticated]
     queryset = ToList.objects.all()
     serializer_class = ToListSerializer
+    throttle_classes = [UserRateThrottle]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -34,6 +36,7 @@ class ToListViewDetails(
     permission_classes = [IsAuthenticated, OwnerList]
     queryset = ToList.objects.all()
     serializer_class = ToListSerializer
+    throttle_classes = [UserRateThrottle]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -49,6 +52,7 @@ class SearchListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     serializer_class = ToListSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
         return ToList.objects.filter(
