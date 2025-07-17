@@ -56,3 +56,19 @@ class ToTaskDetailView(
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+
+class SearchTaskView(mixins.ListModelMixin,
+                 generics.GenericAPIView):
+
+    serializer_class = ToTaskSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ToTasks.objects.filter(name=self.request.data.get('name') , list_id = self.kwargs.get('list_pk') )
+
+    def get(self, request, *args, **kwargs ):
+        return self.list(request, *args, **kwargs)
+
+
