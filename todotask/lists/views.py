@@ -48,14 +48,14 @@ class ToListViewDetails (mixins.RetrieveModelMixin,
     
 
 
-class SearchView(mixins.ListModelMixin,
+class SearchListView(mixins.ListModelMixin,
                  generics.GenericAPIView):
 
     serializer_class = ToListSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return ToList.objects.filter(title=self.request.data.get('name') , user_id = self.request.user.id )
+        return ToList.objects.filter(title=self.request.data.get('title') , user_id = self.request.user.id )
 
     def get(self, request, *args, **kwargs ):
         return self.list(request, *args, **kwargs)
