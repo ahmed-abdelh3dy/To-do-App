@@ -19,7 +19,7 @@ A fully functional Todo List RESTful API built with Django & Django REST Framewo
 - **POST** `  /lists`: Create a new list.
 - **PUT** `   /lists/<id>`: Update an existing list.
 - **DELETE** `/lists/<id>`: Delete a list.
-- **GET** `   /lists/search/?title=...`: Search lists by title.
+- **GET** `   /lists/search`: Search lists by title.
 
 ---
 
@@ -31,7 +31,7 @@ A fully functional Todo List RESTful API built with Django & Django REST Framewo
 - **PUT** `   /lists/<list_id>/tasks/<task_id>`: Update a task.
 - **DELETE** `/lists/<list_id>/tasks/<task_id>`: Delete a task.
 - **PATCH** ` /lists/<list_id>/tasks/<task_id>/complete`: Mark a task as completed.
-- **GET** `   /tasks/search/?name=...`: Search tasks by name.
+- **GET** `   /tasks/search`: Search tasks by name.
 
 ---
 
