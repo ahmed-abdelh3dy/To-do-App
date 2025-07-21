@@ -7,8 +7,10 @@ A fully functional Todo List RESTful API built with Django & Django REST Framewo
 ## 🔐 Authentication (Simple JWT)
 
 - **POST** `/auth/register`: Register a new user.
-- **POST** `/auth/login`: Obtain JWT token.
 - **POST** `/auth/profile`: Get logged-in user's profile (username + total task count).
+- **POST** `/auth/api/token/`: Obtain JWT token (login).
+- **POST** `/auth/api/token/refresh/`: Refresh access token.
+- **POST** `/auth/api/token/verify/`: Verify token validity.
 
 ---
 
@@ -37,10 +39,13 @@ A fully functional Todo List RESTful API built with Django & Django REST Framewo
 
 ## ⚙️ Features
 
-- 🔐 JWT Authentication using Simple JWT
-- 📋 Full CRUD for Todo Lists and Tasks
-- ✅ Task completion logic (completed tasks are hidden from all views)
-- 🔍 Search endpoint for lists and tasks
-- 🌐 CORS enabled
-- ⏳ Throttling enabled
-- 📄 Pagination enabled
+- 🔐 Authentication using **Simple JWT**
+- 🧾 Full **CRUD** for Todo Lists and Tasks
+- ✅ Mark tasks as completed (disappear from views)
+- 📄 **Pagination** support for list/task views
+- ⏱️ **Throttling** enabled to protect the API
+- 🌐 **CORS** enabled for frontend integration
+- 🔍 Search functionality:
+  - Search lists by **title**
+  - Search tasks by **name**
+- 📘 **Swagger UI** documentation
