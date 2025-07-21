@@ -1,30 +1,32 @@
-from django.shortcuts import render
 from .serializer import UserSerializer
 from .models import CustomeUser
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.throttling import UserRateThrottle
 from rest_framework.throttling import AnonRateThrottle
+from drf_spectacular.utils import extend_schema
 
 
-class RegisterView(APIView):
+class RegisterView(APIView ):
+    authentication_classes = []
     throttle_classes = [AnonRateThrottle]
 
-    def post(self, request):
+    @extend_schema(
+        request=UserSerializer,  
+        responses={200: UserSerializer},
+    )
 
+    def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
 
         user = CustomeUser.objects.create(
-            username=username, password=make_password("password")
+            username=username,
+        password=make_password(password)
         )
 
         serializer = UserSerializer(user)
-        return Response({"user registerd": serializer.data}, status=200)
+        return Response({"user registered": serializer.data}, status=200)
 
 
 class ProfileView(APIView):
