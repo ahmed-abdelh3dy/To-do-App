@@ -27,27 +27,6 @@ class RegisterView(APIView):
         return Response({"user registerd": serializer.data}, status=200)
 
 
-class LoginView(APIView):
-    throttle_classes = [UserRateThrottle]
-
-    def post(self, request):
-        password = request.data.get("password")
-        username = request.data.get("username")
-
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
-            return Response(
-                {
-                    "message": "user loged in",
-                    "status": True,
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }
-            )
-        return Response({"status": 404})
-
-
 class ProfileView(APIView):
     def get(self, request):
 
