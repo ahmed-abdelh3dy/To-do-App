@@ -5,9 +5,13 @@ from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from rest_framework.throttling import AnonRateThrottle
 from drf_spectacular.utils import extend_schema
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
-class RegisterView(APIView ):
+
+class RegisterView(APIView):
     authentication_classes = []
     throttle_classes = [AnonRateThrottle]
 
@@ -15,14 +19,26 @@ class RegisterView(APIView ):
         request=UserSerializer,  
         responses={200: UserSerializer},
     )
-
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
+        email = request.data.get("email")
+
+        if CustomeUser.objects.filter(username=username).exists():
+            return Response({'error': 'username already exists'}, status=400)
+
+        if CustomeUser.objects.filter(email=email).exists():
+            return Response({'error': 'email already exists'}, status=400)
+
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({'error': e.messages}, status=400)
 
         user = CustomeUser.objects.create(
             username=username,
-        password=make_password(password)
+            email=email,
+            password=password 
         )
 
         serializer = UserSerializer(user)
@@ -30,6 +46,7 @@ class RegisterView(APIView ):
 
 
 class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
 
         username = request.user.username
