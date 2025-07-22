@@ -38,7 +38,7 @@ class RegisterView(APIView):
         user = CustomeUser.objects.create(
             username=username,
             email=email,
-            password=password 
+            password=make_password(password) 
         )
 
         serializer = UserSerializer(user)
