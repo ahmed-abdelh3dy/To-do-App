@@ -6,8 +6,10 @@ from rest_framework import mixins
 from rest_framework import generics
 from lists.models import ToList
 from rest_framework.throttling import UserRateThrottle
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(tags=["Tasks"])
 class ToTaskView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
@@ -33,6 +35,7 @@ class ToTaskView(
         return self.create(request, *args, **kwargs)
 
 
+@extend_schema(tags=["Tasks"])
 class ToTaskDetailView(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
@@ -60,6 +63,7 @@ class ToTaskDetailView(
         return self.destroy(request, *args, **kwargs)
 
 
+@extend_schema(tags=["Tasks"])
 class SearchTaskView(mixins.ListModelMixin, generics.GenericAPIView):
 
     serializer_class = ToTaskSerializers
