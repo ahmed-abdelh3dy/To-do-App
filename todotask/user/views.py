@@ -2,7 +2,6 @@ from .serializer import UserSerializer
 from .models import CustomeUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth.hashers import make_password
 from rest_framework.throttling import AnonRateThrottle
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
@@ -35,10 +34,10 @@ class RegisterView(APIView):
         except ValidationError as e:
             return Response({'error': e.messages}, status=400)
 
-        user = CustomeUser.objects.create(
+        user = CustomeUser.objects.create_user(
             username=username,
             email=email,
-            password=make_password(password) 
+            password=password
         )
 
         serializer = UserSerializer(user)
