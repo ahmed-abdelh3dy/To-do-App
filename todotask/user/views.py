@@ -5,47 +5,35 @@ from rest_framework.views import APIView
 from rest_framework.throttling import AnonRateThrottle
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
-
+from rest_framework import status
 
 
 class RegisterView(APIView):
     authentication_classes = []
     throttle_classes = [AnonRateThrottle]
 
-    @extend_schema(
-        request=UserSerializer,  
-        responses={200: UserSerializer},
-    )
+    @extend_schema(request=UserSerializer, responses={200: UserSerializer})
     def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
-        email = request.data.get("email")
+        serializer = UserSerializer(data=request.data)
 
-        if CustomeUser.objects.filter(username=username).exists():
-            return Response({'error': 'username already exists'}, status=400)
-
-        if CustomeUser.objects.filter(email=email).exists():
-            return Response({'error': 'email already exists'}, status=400)
-
-        try:
-            validate_password(password)
-        except ValidationError as e:
-            return Response({'error': e.messages}, status=400)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         user = CustomeUser.objects.create_user(
-            username=username,
-            email=email,
-            password=password
+            username=serializer.validated_data["username"],
+            email=serializer.validated_data["email"],
+            password=serializer.validated_data["password"],
         )
 
-        serializer = UserSerializer(user)
-        return Response({"user registered": serializer.data}, status=200)
+        return Response(
+            {"User Registered": UserSerializer(user).data}, status=status.HTTP_200_OK
+        )
 
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+
     def get(self, request):
 
         username = request.user.username
@@ -55,4 +43,4 @@ class ProfileView(APIView):
             tasks = list.tasks.count()
             count += tasks
 
-        return Response({"username is  ": username, "total tasks": count})
+        return Response({"Username is  ": username, "Total Tasks": count})
