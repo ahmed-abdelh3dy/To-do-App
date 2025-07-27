@@ -6,6 +6,8 @@ from rest_framework.throttling import AnonRateThrottle
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 class RegisterView(APIView):
@@ -18,11 +20,19 @@ class RegisterView(APIView):
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        password=serializer.validated_data["password"]
 
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({'error': e.messages}, status=400)
+
+        
         user = CustomeUser.objects.create_user(
             username=serializer.validated_data["username"],
             email=serializer.validated_data["email"],
-            password=serializer.validated_data["password"],
+            password=password
         )
 
         return Response(
