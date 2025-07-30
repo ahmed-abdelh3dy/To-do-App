@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import ToList
+from .models import ToDoList
 
 
-class ToListSerializer(serializers.ModelSerializer):
+class ToDoListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ToList
+        model = ToDoList
         fields = ['id' , 'title' , 'deadline']
-        read_only_fields = ('user_id' , )
+        read_only_fields = ('user' , )

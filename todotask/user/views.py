@@ -6,11 +6,10 @@ from rest_framework.throttling import AnonRateThrottle
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 
 
-class RegisterView(APIView):
+
+class UserRegisterView(APIView):
     authentication_classes = []
     throttle_classes = [AnonRateThrottle]
 
@@ -23,11 +22,7 @@ class RegisterView(APIView):
         
         password=serializer.validated_data["password"]
 
-        try:
-            validate_password(password)
-        except ValidationError as e:
-            return Response({'error': e.messages}, status=400)
-
+        
         
         user = CustomeUser.objects.create_user(
             username=serializer.validated_data["username"],
@@ -36,18 +31,18 @@ class RegisterView(APIView):
         )
 
         return Response(
-            {"User Registered": UserSerializer(user).data}, status=status.HTTP_200_OK
+            {"User ": UserSerializer(user).data}, status=status.HTTP_200_OK
         )
 
 
-class ProfileView(APIView):
+class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 
     def get(self, request):
 
         username = request.user.username
-        lists = request.user.lists.all()
+        lists = request.user.todo_lists.all()
         count = 0
         for list in lists:
             tasks = list.tasks.count()

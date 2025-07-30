@@ -1,45 +1,42 @@
-from .serializer import ToListSerializer
-from .models import ToList
-from rest_framework import mixins
-from rest_framework import generics
+from .serializer import ToDoListSerializer
+from .models import ToDoList
+from rest_framework import mixins, generics
 from rest_framework.throttling import UserRateThrottle
 from .mixins import ListPermissionMixins
 
 
-class ToListView(
+class ToDoListView(
     ListPermissionMixins,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     generics.GenericAPIView,
 ):
-
-    queryset = ToList.objects.all()
-    serializer_class = ToListSerializer
+    queryset = ToDoList.objects.all()
+    serializer_class = ToDoListSerializer
     throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
-        return ToList.objects.filter(user_id=self.request.user.id)
+        return ToDoList.objects.filter(user=self.request.user)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user)
+        serializer.save(user=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
 
-class ToListViewDetails(
+class ToDoListDetailView(
     ListPermissionMixins,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     generics.GenericAPIView,
 ):
-
-    queryset = ToList.objects.all()
-    serializer_class = ToListSerializer
+    queryset = ToDoList.objects.all()
+    serializer_class = ToDoListSerializer
     throttle_classes = [UserRateThrottle]
 
     def get(self, request, *args, **kwargs):
@@ -52,17 +49,20 @@ class ToListViewDetails(
         return self.destroy(request, *args, **kwargs)
 
 
-class SearchListView(
-    ListPermissionMixins, mixins.ListModelMixin, generics.GenericAPIView
+class ToDoListSearchView(
+    ListPermissionMixins,
+    mixins.ListModelMixin,
+    generics.GenericAPIView
 ):
-
-    serializer_class = ToListSerializer
+    serializer_class = ToDoListSerializer
     throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
-        return ToList.objects.filter(
-            title=self.request.data.get("title"), user_id=self.request.user.id
-        )
+        title = self.request.data.get("title")
+        return ToDoList.objects.filter(
+            title=title,
+            user=self.request.user
+        ).order_by('id')
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

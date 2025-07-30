@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import ToListView , ToListViewDetails , SearchListView
+from .views import ToDoListView , ToDoListDetailView , ToDoListSearchView
 
 
 urlpatterns = [
-    path('lists' , ToListView.as_view()),
-    path('lists/<int:pk>' , ToListViewDetails.as_view()),
-    path('lists/search' , SearchListView.as_view()),
+    path('lists' , ToDoListView.as_view()),
+    path('lists/<int:pk>' , ToDoListDetailView.as_view()),
+    path('lists/search' , ToDoListSearchView.as_view()),
 ]
 
