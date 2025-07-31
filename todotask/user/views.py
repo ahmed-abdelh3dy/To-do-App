@@ -8,7 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 
-
 class UserRegisterView(APIView):
     authentication_classes = []
     throttle_classes = [AnonRateThrottle]
@@ -19,20 +18,16 @@ class UserRegisterView(APIView):
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        password=serializer.validated_data["password"]
 
-        
-        
+        password = serializer.validated_data["password"]
+
         user = CustomeUser.objects.create_user(
             username=serializer.validated_data["username"],
             email=serializer.validated_data["email"],
-            password=password
+            password=password,
         )
 
-        return Response(
-            {"User ": UserSerializer(user).data}, status=status.HTTP_200_OK
-        )
+        return Response({"User ": UserSerializer(user).data}, status=status.HTTP_200_OK)
 
 
 class UserProfileView(APIView):
@@ -42,10 +37,10 @@ class UserProfileView(APIView):
     def get(self, request):
 
         username = request.user.username
-        lists = request.user.todo_lists.all()
+        Todo_lists_of_user = request.user.todo_lists.all()
         count = 0
-        for list in lists:
-            tasks = list.tasks.count()
+        for todo_list in Todo_lists_of_user:
+            tasks = todo_list.tasks.count()
             count += tasks
 
         return Response({"Username is  ": username, "Total Tasks": count})
