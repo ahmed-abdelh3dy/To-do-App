@@ -1,6 +1,6 @@
 from rest_framework import permissions
-from .permissions import OwnerList
+from .permissions import  HasToDoListPermission
 
 
 class ListPermissionMixins():
-    permission_classes = [permissions.IsAuthenticated , OwnerList]
+    permission_classes = [permissions.IsAuthenticated , HasToDoListPermission]  
