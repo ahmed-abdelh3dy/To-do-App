@@ -1,6 +1,7 @@
 # 📝 Todo List API with Django REST Framework
 
-A fully functional Todo List RESTful API built with Django & Django REST Framework. This project supports user authentication using JWT, allows users to manage todo lists and tasks, includes advanced features like pagination, throttling, CORS, and search capabilities.
+A collaborative Todo List RESTful API built with Django & Django REST Framework.  
+This project was developed as a team effort and supports user authentication using JWT, allows users to manage todo lists and tasks, and includes advanced features like pagination, throttling, CORS, and search capabilities.
 
 ---
 
